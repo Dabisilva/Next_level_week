@@ -45,6 +45,7 @@ function TeacherForm() {
             name,
             avatar,
             whatsapp,
+            subject,
             bio,
             cost: Number(cost),
             schedule: scheduleItems
