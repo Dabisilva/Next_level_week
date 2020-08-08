@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react'
-import { View, Text, Image, TouchableOpacity } from 'react-native'
+import React, { useState } from 'react'
+import { useFocusEffect} from '@react-navigation/native'
+import { View, Text, Image } from 'react-native'
 import api from '../../services/api'
 
 import styles from './styles'
@@ -32,9 +33,9 @@ function Landing() {
         })
     }
 
-    useEffect(()=> {
+    useFocusEffect(()=> {
         getTotalConnections()
-    }, [])
+    })
 
     return (
         <View style={styles.container}>

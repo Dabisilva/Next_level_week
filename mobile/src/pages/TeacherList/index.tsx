@@ -1,20 +1,22 @@
-import React, { useState } from 'react'
-import { View, Text, ScrollView, TextInput } from 'react-native'
+import React, { useState, useEffect } from 'react'
+import { View, Text, ScrollView, TextInput, Alert, AsyncStorage } from 'react-native'
 import api from '../../services/api'
 
 import PageHeader from '../../components/PageHeader'
-import TeacherItem from '../../components/TeacherItem'
+import TeacherItem, { Teacher } from '../../components/TeacherItem'
 import { Feather } from '@expo/vector-icons'
-
+import { useFocusEffect } from '@react-navigation/native'
 import { widthPercentageToDP } from 'react-native-responsive-screen'
 import { BorderlessButton, RectButton } from 'react-native-gesture-handler'
 
 import styles from './styles'
 
+
 function TeacherList() {
     const [filtersVisible, setFiltersVisible] = useState(false)
-
+    const [favorites, setFavorites] = useState<number[]>([])
     const [teachers, setTeachers] = useState([])
+
     const [subject, setSubject] = useState('')
     const [week_day, setWeek_day] = useState('')
     const [time, setTime] = useState('')
@@ -29,19 +31,55 @@ function TeacherList() {
         setFiltersVisible(!filtersVisible)
     }
 
-    async function filterSubmit(){
-        const response = await api.get('classes', {
-            params: {
-                subject, 
-                week_day, 
-                time
-            }
-        })
+    async function filterSubmit() {
+        loadFavorites()
 
-        console.log(response.data)
-        setTeachers(response.data)
+        if (subject && week_day && time === '') {
+            Alert.alert(
+                "Preencha os campos",
+                "",
+                [
+                    {
+                        text: "",
+                        onPress: () => { },
+                        style: "cancel"
+                    },
+                    { text: "Tentar novamente", onPress: () => { } }
+                ],
+                { cancelable: false }
+            );
+        } else {
+            const response = await api.get('classes', {
+                params: {
+                    week_day,
+                    subject,
+                    time
+                }
+            })
+            setTeachers(response.data)
+            setFiltersVisible(!filtersVisible)
+            setSubject('')
+            setWeek_day('')
+            setTime('')
+        }
     }
 
+    function loadFavorites(){
+        AsyncStorage.getItem('favorites').then(response => {
+            if(response){
+                const favoriteTeachers = JSON.parse(response)
+                const favoriteTeachersId = favoriteTeachers.map((favoriteTeacher: Teacher) => {
+                    return favoriteTeacher.id
+                })
+
+                setFavorites(favoriteTeachersId)
+            }
+        })
+    }
+
+    useFocusEffect(()=>{
+        loadFavorites()
+    })
     return (
         <View style={styles.container}>
             <PageHeader title="Proffys disponíveis" headerRight={
@@ -89,7 +127,7 @@ function TeacherList() {
 
                         <RectButton onPress={filterSubmit} style={styles.submitButton}>
                             <Text style={styles.submitButtonText}>Filtrar</Text>
-                        </RectButton>   
+                        </RectButton>
                     </View>
                 )}
             </PageHeader>
@@ -102,10 +140,15 @@ function TeacherList() {
                     paddingBottom: widthPercentageToDP('2%')
                 }}
             >
-                <TeacherItem />
-                <TeacherItem />
-                <TeacherItem />
-                <TeacherItem />
+                {teachers.map((teacher: Teacher) => {
+                    return (
+                    <TeacherItem 
+                        key={teacher.id} 
+                        classes={teacher} 
+                        favorited={favorites.includes(teacher.id)}
+                    />
+                    )
+                })}
             </ScrollView>
         </View>
     )
