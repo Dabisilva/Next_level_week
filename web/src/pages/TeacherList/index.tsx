@@ -13,12 +13,6 @@ function TeacherList() {
     const [week_day, setWeek_day] = useState('')
     const [time, setTime] = useState('')
 
-    const [name, setName] = useState('')
-    const [avatar, setAvatar] = useState('')
-    const [whatsapp, setWhatsapp] = useState('')
-    const [bio, setBio] = useState('')
-    const [cost, setCost] = useState('')
-
     async function searchTeacher(e:FormEvent){
         e.preventDefault()
 

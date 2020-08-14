@@ -6,20 +6,48 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#8257E5',
         justifyContent: 'center',
-        padding: widthPercentageToDP('5%')
     },
-
+    headerUser: {
+        padding: widthPercentageToDP('5%'),
+        marginVertical: widthPercentageToDP('10%'),
+        flexDirection: 'row',
+        marginHorizontal: widthPercentageToDP('5%'),
+        justifyContent: 'space-between',
+    },
+    datesUser: {
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
+    nameUser: {
+        marginLeft: widthPercentageToDP('5%%'),
+        color: '#D4C2FF',
+        fontSize: widthPercentageToDP('4%'),
+        fontFamily: 'Poppins_400Regular'
+    },
+    logoutButton: {
+        justifyContent: 'center',
+        backgroundColor: '#6842C2',
+        borderRadius: widthPercentageToDP('3%'),
+        alignItems: 'center',
+        width: widthPercentageToDP('10%'),
+        height: widthPercentageToDP('10%')
+    },
     bunner: {
         width: '100%',
         resizeMode: 'contain',
     },
-
+    body: {
+        flex: 1,
+        backgroundColor: '#fff',
+        padding: widthPercentageToDP('5%'),
+        marginTop: widthPercentageToDP('10%'),
+    },
     title: {
-        color: '#fff',
+        color: '#6A6180',
         fontFamily: 'Poppins_400Regular',
         fontSize: widthPercentageToDP('5%'),
         lineHeight: widthPercentageToDP('8%'),
-        marginTop: widthPercentageToDP('20%')
+        marginTop: widthPercentageToDP('10%')
     },
 
     titleBold: {
