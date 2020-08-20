@@ -1,8 +1,5 @@
 import React, { createContext, useState, useEffect, useContext } from 'react'
 import api from '../services/api'
-import { Alert } from 'react-native'
-import AsyncStorage from '@react-native-community/async-storage'
-import SplashScreen from 'react-native-splash-screen'
 
 interface User {
     id: number
@@ -61,10 +58,10 @@ export const AuthProvider: React.FC = ({ children }) => {
 
 
     async function loadStorage() {
-        const userToken = await AsyncStorage.getItem('@ProffyAuth:token')
-        const getStorageUser = await AsyncStorage.getItem('@ProffyAuth:user')
-        const getProffyDate = await AsyncStorage.getItem('@Proffy:proffy')
-        const getSchedule = await AsyncStorage.getItem('@Proffy:schedule')
+        const userToken = await localStorage.getItem('@ProffyAuth:token')
+        const getStorageUser = await localStorage.getItem('@ProffyAuth:user')
+        const getProffyDate = await localStorage.getItem('@Proffy:proffy')
+        const getSchedule = await localStorage.getItem('@Proffy:schedule')
 
         const proffyDate = JSON.parse(String(getProffyDate))
 
@@ -99,7 +96,7 @@ export const AuthProvider: React.FC = ({ children }) => {
 
                 const proffyDates = JSON.stringify(response.data.proffy)
 
-                AsyncStorage.setItem('@Proffy:proffy', proffyDates)
+                localStorage.setItem('@Proffy:proffy', proffyDates)
             })
 
         await api.get(`schedule/${user?.id}`)
@@ -107,7 +104,7 @@ export const AuthProvider: React.FC = ({ children }) => {
                 setSchedule(response.data.schedule)
                 const setScheduleStorage = JSON.stringify(response.data.schedule)
 
-                AsyncStorage.setItem('@Proffy:schedule', setScheduleStorage)
+                localStorage.setItem('@Proffy:schedule', setScheduleStorage)
             })
     }
 
@@ -123,22 +120,12 @@ export const AuthProvider: React.FC = ({ children }) => {
             const userDates = JSON.stringify(response.data.user)
             const userToken = JSON.stringify(response.data.token)
 
-            AsyncStorage.setItem('@ProffyAuth:token', userToken)
-            AsyncStorage.setItem('@ProffyAuth:user', userDates)
+            localStorage.setItem('@ProffyAuth:token', userToken)
+            localStorage.setItem('@ProffyAuth:user', userDates)
 
 
         }).catch(() => {
-            Alert.alert(
-                'Dados incorretos',
-                '',
-                [
-                    {
-                        text: 'Tentar novamente',
-                        onPress: () => { },
-                        style: 'cancel'
-                    }
-                ]
-            )
+           alert('dados incorretos')
         })
     }
     
@@ -154,8 +141,8 @@ export const AuthProvider: React.FC = ({ children }) => {
             const userDates = JSON.stringify(response.data.user)
             const userToken = JSON.stringify(response.data.token)
             
-            AsyncStorage.setItem('@ProffyAuth:token', userToken)
-            AsyncStorage.setItem('@ProffyAuth:user', userDates)
+            localStorage.setItem('@ProffyAuth:token', userToken)
+            localStorage.setItem('@ProffyAuth:user', userDates)
 
 
         }).catch(() => {
@@ -164,27 +151,7 @@ export const AuthProvider: React.FC = ({ children }) => {
     }
 
     function SignOut() {
-        Alert.alert(
-            'Deseja deslogar?', '',
-            [
-                {
-                    text: 'cancelar',
-                    onPress: () => { },
-                    style: 'cancel'
-                },
-                {
-                    text: 'Ok',
-                    onPress: () => {
-                        AsyncStorage.clear().then(() => {
-                            setUser(null)
-                        }).catch((err) => {
-                            console.log(err)
-                        })
-                    },
-                    style: 'destructive'
-                }
-            ]
-        )
+        prompt('deseja deslogar?')
     }
     return (
         <AuthContext.Provider value={{

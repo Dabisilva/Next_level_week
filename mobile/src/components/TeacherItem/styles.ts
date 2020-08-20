@@ -48,12 +48,62 @@ const styles = StyleSheet.create({
         lineHeight: widthPercentageToDP('5%'),
         color: '#6a6180'
     },
-
+    body: {
+        marginTop: widthPercentageToDP('5%'),
+        padding: widthPercentageToDP('5%'),
+        borderBottomColor: '#E6E6F0' ,
+        borderBottomWidth: 1,
+        borderTopColor: '#E6E6F0' ,
+        borderTopWidth: 1,
+    },
+    bodyTitle: {
+        paddingHorizontal:widthPercentageToDP('10%'),
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between'
+    },
+    textBody :{
+        color: '#9C98A6',
+        fontFamily: 'Poppins_400Regular',
+        fontSize: widthPercentageToDP('2.5%')
+    },
+    itemsSchedule: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        margin: widthPercentageToDP('2%'),
+        padding: widthPercentageToDP('3%'),
+        backgroundColor: '#FAFAFA',
+        borderWidth: 1,
+        borderColor: '#DCDCE5',
+        borderRadius: widthPercentageToDP('3%')
+    },
+    itemsSchedule2: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        margin: widthPercentageToDP('2%'),
+        padding: widthPercentageToDP('2%'),
+        backgroundColor: '#FAFAFA',
+        borderWidth: 1,
+        borderColor: '#DCDCE5',
+        borderRadius: widthPercentageToDP('3%'),
+        opacity: 0.3
+    },
+    textSchedule: {
+        fontFamily: 'Archivo_700Bold',
+        color: '#6A6180',
+        fontSize: widthPercentageToDP('4%')
+    },
+    textSchedule2: {
+        fontFamily: 'Archivo_700Bold',
+        color: '#6A6180',
+        fontSize: widthPercentageToDP('3%')
+    },
     footer: {
         backgroundColor: '#fafafc',
         padding: widthPercentageToDP('5%'),
         alignItems: 'center',
-        marginTop: widthPercentageToDP('5%')
     },
 
     price: {

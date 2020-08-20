@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useContext } from 'react'
-import { View, Image, ImageBackground, Text, TextInput, KeyboardAvoidingView, TouchableOpacity, CheckBox, Platform, Alert, AsyncStorage } from 'react-native'
+import React, { useState } from 'react'
+import { View, Image, ImageBackground, Text, TextInput, ScrollView, TouchableOpacity, CheckBox, Platform } from 'react-native'
 import { Feather } from '@expo/vector-icons'
 import BgImage from '../../assets/images/Background.png'
 import inicialIcon from '../../assets/images/Intro.png'
 import { widthPercentageToDP } from 'react-native-responsive-screen'
 import { RectButton } from 'react-native-gesture-handler'
 import { useNavigation } from '@react-navigation/native'
-import AuthContext from '../../contexts/auth'
+import {useAuth} from '../../contexts/auth'
 
 import styles from './styles'
 
@@ -14,9 +14,13 @@ const Login: React.FC = () => {
     const navigation = useNavigation()
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
-    const [isSelected, setSelection] = useState(false);
     const [showPassowrd, setShowpassord] = useState(false);
-    const { SignIn, signed } = useContext(AuthContext)
+    const { SignIn } = useAuth()
+    const [isSelected, setSelected] = useState(false);
+
+    function forgetPass(){
+        navigation.navigate('ForgetPassword')
+    }
 
     function createAcount() {
         navigation.navigate('CreateAccount')
@@ -29,6 +33,10 @@ const Login: React.FC = () => {
     function eyeShow() {
         setShowpassord(!showPassowrd)
     }
+    
+    
+    //Remember(isSelected)
+    
 
     function AwaitButton() {
         if (password.length >= 8 && email.length >= 10) {
@@ -45,12 +53,9 @@ const Login: React.FC = () => {
             )
         }
     }
-    useEffect(()=> {
-        const userDatas = AsyncStorage.getItem('@ProffyAuth:user')
-        console.log({signed, userDatas})
-    }, [])
+    
     return (
-        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} enabled style={styles.container}>
+        <ScrollView style={styles.container}>
             <View style={styles.header}>
                 <ImageBackground source={BgImage} resizeMode="contain" style={styles.content}>
                     <Image source={inicialIcon} />
@@ -68,6 +73,7 @@ const Login: React.FC = () => {
                     <TextInput
                         style={styles.input1}
                         placeholder="E-mail"
+                        textContentType="emailAddress"
                         keyboardType="email-address"
                         autoCapitalize="none"
                         value={email}
@@ -77,6 +83,7 @@ const Login: React.FC = () => {
                         <TextInput
                             secureTextEntry={showPassowrd ? false : true}
                             style={styles.input}
+                            textContentType="password"
                             placeholder="Senha"
                             value={password}
                             onChangeText={text => setPassword(text)}
@@ -96,18 +103,18 @@ const Login: React.FC = () => {
                     <View style={styles.remember}>
                         <CheckBox
                             value={isSelected}
-                            onValueChange={setSelection}
+                            onValueChange={setSelected}
                         />
                         <Text style={styles.footerText}>Lembrar-me</Text>
                     </View>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={forgetPass}>
                         <Text style={styles.footerText}>Esqueci minha senha</Text>
                     </TouchableOpacity>
                 </View>
                 <AwaitButton />
 
             </View>
-        </KeyboardAvoidingView>
+        </ScrollView>
     )
 }
 

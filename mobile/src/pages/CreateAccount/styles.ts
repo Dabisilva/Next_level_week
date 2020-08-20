@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     },
     enterButtonFilled: {
         marginTop: widthPercentageToDP('8%'),
-        backgroundColor: '#04D361',
+        backgroundColor: '#8257E5',
         height: widthPercentageToDP('15%'),
         borderRadius: widthPercentageToDP('4%'),
         marginHorizontal: widthPercentageToDP('5%'),

@@ -19,10 +19,17 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     nameUser: {
-        marginLeft: widthPercentageToDP('5%%'),
+        marginLeft: widthPercentageToDP('3%'),
         color: '#D4C2FF',
         fontSize: widthPercentageToDP('4%'),
-        fontFamily: 'Poppins_400Regular'
+        fontFamily: 'Poppins_400Regular',
+        borderBottomColor: '#D4C2FF',
+        borderBottomWidth: 1
+    },
+    image: {
+        width: widthPercentageToDP('10%'),
+        borderRadius: widthPercentageToDP('50%'),
+        height: widthPercentageToDP('10%'),
     },
     logoutButton: {
         justifyContent: 'center',

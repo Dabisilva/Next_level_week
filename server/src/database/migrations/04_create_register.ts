@@ -7,6 +7,7 @@ export async function up(Knex: Knex){
         table.string('secund_name').notNullable();
         table.string('email').notNullable();
         table.string('password').notNullable();
+        table.string('avatar')
     })
 }
 

@@ -1,13 +1,13 @@
-import React, { useContext} from 'react'
+import React from 'react'
 import { NavigationContainer } from '@react-navigation/native'
-import AuthContext from '../contexts/auth'
+import { useAuth } from '../contexts/auth'
 
 import AppStack from './AppStack'
 import AuthRoutes from './auth.routes'
 
 
 const Routes: React.FC = () => {
-    const {signed} = useContext(AuthContext)
+    const {signed} = useAuth()
     return signed ? <AppStack/> : <AuthRoutes/>
 }
 

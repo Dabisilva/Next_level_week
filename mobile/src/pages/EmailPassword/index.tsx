@@ -46,29 +46,27 @@ function EmailPassowrd() {
             name,
             secund_name,
         }
-        console.log(params)
-        // const response = await api.post('register', {
-        //     email,
-        //     password,
-        //     name,
-        //     secund_name,
-        // }).then(() => {
-            navigation.navigate('SucessRegister')
-        // }).catch(()=>{ 
-        //     Alert.alert(
-        //         'Erro no cadastro',
-        //         '',
-        //         [
-        //             {
-        //                 text: 'tentar novamente',
-        //                 onPress: () => {},
-        //                 style: 'cancel'
-        //             }
-        //         ]
-        //     )
-        // })
-        // console.log(response)
-        // return response
+        const response = await api.post('register', {
+            email,
+            password,
+            name,
+            secund_name,
+        }).then(() => {
+            navigation.navigate('SucessRegister', {email, password})
+        }).catch(()=>{ 
+            Alert.alert(
+                'Erro no cadastro',
+                '',
+                [
+                    {
+                        text: 'tentar novamente',
+                        onPress: () => {},
+                        style: 'cancel'
+                    }
+                ]
+            )
+        })
+        return response
     }
 
     return (
@@ -99,6 +97,7 @@ function EmailPassowrd() {
                         secureTextEntry={showPassowrd ? false : true}
                         style={styles.input}
                         placeholder="Senha"
+                        autoCapitalize="none"
                         value={password}
                         onChangeText={text => setPassword(text)}
                     />

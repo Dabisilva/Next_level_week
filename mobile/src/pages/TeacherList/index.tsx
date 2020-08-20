@@ -1,39 +1,53 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, ScrollView, TextInput, Alert, AsyncStorage } from 'react-native'
+import { View, Text, ScrollView, TextInput, Alert, AsyncStorage, Image, Picker } from 'react-native'
 import api from '../../services/api'
 
 import PageHeader from '../../components/PageHeader'
 import TeacherItem, { Teacher } from '../../components/TeacherItem'
 import { Feather } from '@expo/vector-icons'
+import teacherEmoji from '../../assets/images/Encontrado.png'
 import { useFocusEffect } from '@react-navigation/native'
 import { widthPercentageToDP } from 'react-native-responsive-screen'
 import { BorderlessButton, RectButton } from 'react-native-gesture-handler'
+import { useAuth } from '../../contexts/auth'
 
 import styles from './styles'
 
 
-function TeacherList() {
+interface Schedule{
+    week_day: number
+    from: number
+    to: number
+}
+
+interface ScheduleProps {
+    scheduleItems: Schedule
+}
+
+const TeacherList: React.FC<ScheduleProps> = ({scheduleItems}) => {
+    const { user, userProffy } = useAuth()
     const [filtersVisible, setFiltersVisible] = useState(false)
     const [favorites, setFavorites] = useState<number[]>([])
     const [teachers, setTeachers] = useState([])
+    const [totalProffy, setTotalProffy] = useState(0)
 
     const [subject, setSubject] = useState('')
-    const [week_day, setWeek_day] = useState('')
+    const [week_day, setWeek_day] = useState(0)
     const [time, setTime] = useState('')
 
-    const [name, setName] = useState('')
-    const [avatar, setAvatar] = useState('')
-    const [whatsapp, setWhatsapp] = useState('')
-    const [bio, setBio] = useState('')
-    const [cost, setCost] = useState('')
+    const [schedules, setSchedules] = useState(scheduleItems)
 
     function heandleShowFilters() {
         setFiltersVisible(!filtersVisible)
     }
+    
+    async function getTotalProffy() {
+        const response = await api.get('proffys')
+        setTotalProffy(response.data.total)
+    }
 
     async function filterSubmit() {
         loadFavorites()
-
         if (subject && week_day && time === '') {
             Alert.alert(
                 "Preencha os campos",
@@ -49,24 +63,42 @@ function TeacherList() {
                 { cancelable: false }
             );
         } else {
-            const response = await api.get('classes', {
-                params: {
-                    week_day,
-                    subject,
-                    time
-                }
-            })
-            setTeachers(response.data)
-            setFiltersVisible(!filtersVisible)
-            setSubject('')
-            setWeek_day('')
-            setTime('')
+            try {
+                const response = await api.get('classes', {
+                    params: {
+                        week_day,
+                        subject,
+                        time
+                    }
+                })
+                console.log(response.data.schedules[0])
+                setTeachers(response.data.classes)
+                setSchedules(response.data.schedules[0])
+                setFiltersVisible(!filtersVisible)
+                setSubject('')
+                setWeek_day(0)
+                setTime('')
+            } catch (err){
+                Alert.alert(
+                    "Não possuimos nenhum professor com esses horários",
+                    "",
+                    [
+                        {
+                            text: "",
+                            onPress: () => { },
+                            style: "cancel"
+                        },
+                        { text: "oK", onPress: () => { } }
+                    ],
+                    { cancelable: false }
+                );
+            }
+
         }
     }
-
-    function loadFavorites(){
+    function loadFavorites() {
         AsyncStorage.getItem('favorites').then(response => {
-            if(response){
+            if (response) {
                 const favoriteTeachers = JSON.parse(response)
                 const favoriteTeachersId = favoriteTeachers.map((favoriteTeacher: Teacher) => {
                     return favoriteTeacher.id
@@ -77,19 +109,26 @@ function TeacherList() {
         })
     }
 
-    useFocusEffect(()=>{
+    useFocusEffect(() => {
+        getTotalProffy()
         loadFavorites()
     })
     return (
         <View style={styles.container}>
-            <PageHeader title="Proffys disponíveis" headerRight={
-                <BorderlessButton onPress={heandleShowFilters} >
-                    <View style={styles.filterButton}>
-                        <Text style={styles.filterButtonText}>Filtros</Text>
-                        <Feather name="filter" color="#fff" size={widthPercentageToDP('5%')} />
+            <PageHeader title="Proffys disponíveis" subTitle="Estudar" headerRight={
+                <>
+                    <View style={styles.totalProffy}>
+                        <Image source={teacherEmoji} />
+                        <Text style={styles.textTotalProffy}>  {totalProffy} proffys</Text>
                     </View>
-                </BorderlessButton>
+                </>
             }>
+                <RectButton style={styles.filterButton} onPress={heandleShowFilters} >
+
+                    <Feather name="filter" color="#04D361" size={widthPercentageToDP('5%')} />
+                    <Text style={styles.filterButtonText}> Filtrar por dia, hora e matéria</Text>
+
+                </RectButton>
                 {filtersVisible && (
                     <View style={styles.searchForm}>
                         <Text style={styles.label}>Matéria </Text>
@@ -104,13 +143,22 @@ function TeacherList() {
                         <View style={styles.inputGroup}>
                             <View style={styles.inputBlock}>
                                 <Text style={styles.label}>Dia da semana </Text>
-                                <TextInput
-                                    style={styles.input}
-                                    value={week_day}
-                                    onChangeText={text => setWeek_day(text)}
-                                    placeholder="Qual o dia"
-                                    placeholderTextColor="#c1bccc"
-                                />
+                                <View style={styles.input}>
+                                    <Picker
+                                        style={[styles.label, { marginTop: widthPercentageToDP('-1%') }]}
+                                        selectedValue={week_day}
+                                        mode="dropdown"
+                                        onValueChange={(itemValue, itemIndex) => setWeek_day(itemValue)}
+                                    >
+                                        <Picker.Item label="Domingo" value={0} />
+                                        <Picker.Item label="Segunda-feira" value={1} />
+                                        <Picker.Item label="Terça-feira" value={2} />
+                                        <Picker.Item label="Quarta-feira" value={3} />
+                                        <Picker.Item label="Quinta-feira" value={4} />
+                                        <Picker.Item label="Sexta-feira" value={5} />
+                                        <Picker.Item label="Sábado" value={6} />
+                                    </Picker>
+                                </View>
                             </View>
 
                             <View style={styles.inputBlock}>
@@ -142,11 +190,12 @@ function TeacherList() {
             >
                 {teachers.map((teacher: Teacher) => {
                     return (
-                    <TeacherItem 
-                        key={teacher.id} 
-                        classes={teacher} 
-                        favorited={favorites.includes(teacher.id)}
-                    />
+                        <TeacherItem
+                            key={teacher.id}
+                            classes={teacher}
+                            schedules={schedules}
+                            favorited={favorites.includes(teacher.id)}
+                        />
                     )
                 })}
             </ScrollView>

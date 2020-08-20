@@ -1,9 +1,8 @@
-import React, { useState, useContext } from 'react'
+import React, { useState } from 'react'
 import { useFocusEffect } from '@react-navigation/native'
-import { View, Text, Image, AsyncStorage } from 'react-native'
+import { View, Text, Image, TouchableOpacity } from 'react-native'
 import api from '../../services/api'
 import { Feather } from '@expo/vector-icons'
-
 import landingImage from '../../assets/images/landing.png'
 import studyIcon from '../../assets/images/icons/study.png'
 import giveClassesIcon from '../../assets/images/icons/give-classes.png'
@@ -11,16 +10,22 @@ import hearticon from '../../assets/images/icons/heart.png'
 import { useNavigation } from '@react-navigation/native'
 import userImage from '../../assets/images/usuario.png'
 import { RectButton } from 'react-native-gesture-handler'
-import AuthContext from '../../contexts/auth'
+import {useAuth} from '../../contexts/auth'
 
-import styles from './styles'
 import { widthPercentageToDP } from 'react-native-responsive-screen'
+import styles from './styles'
 
 function Landing() {
-    const navigation = useNavigation()
-    const { SignOut, user, signed } = useContext(AuthContext)
-    const [connections, setConnections] = useState(0)
+    const { SignOut, user } = useAuth()
 
+    const [image, setImage] = useState(user?.avatar)
+    const navigation = useNavigation()
+    const [connections, setConnections] = useState(0)
+    
+    function navigationPerfilPage(){
+        navigation.navigate('Perfil')
+    }
+    
     function navigateToClassesPage() {
         navigation.navigate('GiveClasses')
     }
@@ -41,18 +46,16 @@ function Landing() {
     }
 
     useFocusEffect(() => {
-        getTotalConnections()
-        const userDatas = AsyncStorage.getItem('@ProffyAuth:user')
-        console.log({signed, userDatas})
+        getTotalConnections()    
     })
 
     return (
         <View style={styles.container}>
                 <View style={styles.headerUser}>
-                    <View style={styles.datesUser}>
-                        <Image source={userImage} />
-                        <Text style={styles.nameUser}>{`${user.name} ${user.secund_name}`}</Text>
-                    </View>
+                    <TouchableOpacity onPress={navigationPerfilPage} activeOpacity={0.8} style={styles.datesUser}>
+                        <Image style={styles.image} source={image ? {uri : image} : userImage} />
+                        <Text style={styles.nameUser}>{`${user?.name} ${user?.secund_name}`}</Text>
+                    </TouchableOpacity>
                     <RectButton onPress={LogOut} style={styles.logoutButton}>
                         <Feather name="power" color="#D4C2FF" size={widthPercentageToDP('6%')} />
                     </RectButton>

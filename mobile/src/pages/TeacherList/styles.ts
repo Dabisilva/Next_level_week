@@ -20,13 +20,20 @@ const styles = StyleSheet.create({
         color: '#d4c2ff',
         fontFamily: 'Poppins_400Regular'
     },
-
+    totalProffy :{
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
     filterButton:{
         flexDirection: 'row',
+        marginBottom: widthPercentageToDP('10%')
     },
-
+    textTotalProffy :{
+        color: '#F0F0F7',
+        fontFamily: 'Poppins_400Regular'
+    },
     filterButtonText:{
-        color: '#fff',
+        color: '#F0F0F7',
         fontFamily: 'Poppins_400Regular'
     },
 
