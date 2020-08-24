@@ -27,7 +27,7 @@ interface AuthContextData {
         week_day: number
         from: number
         to: number
-    }>| null
+    }> | null
     Remember(
         remem: boolean
     ): void
@@ -48,27 +48,27 @@ const AuthContext = createContext<AuthContextData>({} as AuthContextData)
 export const AuthProvider: React.FC = ({ children }) => {
     const [user, setUser] = useState<User | null>(null)
     const [userProffy, setUserProffy] = useState<userProffy | null>(null)
-    const [schedule, setSchedule] = useState< Array<{
+    const [schedule, setSchedule] = useState<Array<{
         id: number
         week_day: number
         from: number
         to: number
-    }>| null> (null)
+    }> | null>(null)
     const [rememberMe, setRememberMe] = useState(false)
 
 
     async function loadStorage() {
-        const userToken = await localStorage.getItem('@ProffyAuth:token')
-        const getStorageUser = await localStorage.getItem('@ProffyAuth:user')
-        const getProffyDate = await localStorage.getItem('@Proffy:proffy')
-        const getSchedule = await localStorage.getItem('@Proffy:schedule')
+        const userToken = localStorage.getItem('@ProffyAuth:token')
+        const getStorageUser = localStorage.getItem('@ProffyAuth:user')
+        const getProffyDate = localStorage.getItem('@Proffy:proffy')
+        const getSchedule = localStorage.getItem('@Proffy:schedule')
 
         const proffyDate = JSON.parse(String(getProffyDate))
 
         const userData = JSON.parse(String(getStorageUser))
 
         const proffySchedules = JSON.parse(String(getSchedule))
-        
+
         setUserProffy(proffyDate)
         setSchedule(proffySchedules)
 
@@ -94,7 +94,7 @@ export const AuthProvider: React.FC = ({ children }) => {
             .then(response => {
                 setUserProffy(response.data.proffy)
 
-                const proffyDates = JSON.stringify(response.data.proffy)
+                const proffyDates = response.data.proffy
 
                 localStorage.setItem('@Proffy:proffy', proffyDates)
             })
@@ -102,7 +102,7 @@ export const AuthProvider: React.FC = ({ children }) => {
         await api.get(`schedule/${user?.id}`)
             .then(response => {
                 setSchedule(response.data.schedule)
-                const setScheduleStorage = JSON.stringify(response.data.schedule)
+                const setScheduleStorage = response.data.schedule
 
                 localStorage.setItem('@Proffy:schedule', setScheduleStorage)
             })
@@ -117,18 +117,16 @@ export const AuthProvider: React.FC = ({ children }) => {
 
             setUser(response.data.user)
             api.defaults.headers['Authorization'] = `Bearer ${response.data.token}`
-            const userDates = JSON.stringify(response.data.user)
-            const userToken = JSON.stringify(response.data.token)
 
-            localStorage.setItem('@ProffyAuth:token', userToken)
-            localStorage.setItem('@ProffyAuth:user', userDates)
+            localStorage.setItem('@ProffyAuth:user',  response.data.user)
+            localStorage.setItem('@ProffyAuth:token', response.data.token)
 
 
         }).catch(() => {
-           alert('dados incorretos')
+            alert('dados incorretos')
         })
     }
-    
+
     async function UpdateSignIn(email: string, password: string) {
 
         await api.post('session', {
@@ -138,20 +136,21 @@ export const AuthProvider: React.FC = ({ children }) => {
 
             setUser(response.data.user)
             api.defaults.headers['Authorization'] = `Bearer ${response.data.token}`
-            const userDates = JSON.stringify(response.data.user)
-            const userToken = JSON.stringify(response.data.token)
-            
+            const userDates = response.data.user
+            const userToken = response.data.token
+
             localStorage.setItem('@ProffyAuth:token', userToken)
             localStorage.setItem('@ProffyAuth:user', userDates)
 
 
         }).catch(() => {
-           
+
         })
     }
 
     function SignOut() {
-        prompt('deseja deslogar?')
+        localStorage.clear()
+        setUser(null)
     }
     return (
         <AuthContext.Provider value={{

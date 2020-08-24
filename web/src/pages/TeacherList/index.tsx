@@ -12,7 +12,7 @@ function TeacherList() {
     const [subject, setSubject] = useState('')
     const [week_day, setWeek_day] = useState('')
     const [time, setTime] = useState('')
-
+    console.log(teachers)
     async function searchTeacher(e:FormEvent){
         e.preventDefault()
 
@@ -23,7 +23,7 @@ function TeacherList() {
                 time
             }
         })
-        setTeachers(response.data)
+        setTeachers(response.data.classes)
     }
 
     return (
